@@ -12,8 +12,11 @@ public class LocalStateService : ILocalStateService
 
     public LocalStateService()
     {
-        // 纯正 WinUI 3 本地沙盒路径：AppData\Local\Packages\[Package_Id]\LocalState\
-        _filePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "user_progress.json");
+        // 放弃 UWP 沙盒路径，改用绝对安全的经典 AppData 路径
+        string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        string myAppFolder = Path.Combine(appData, "QuizNative");
+        Directory.CreateDirectory(myAppFolder); // 确保文件夹存在
+        _filePath = Path.Combine(myAppFolder, "user_progress.json");
     }
 
     public async Task LoadProgressAsync()

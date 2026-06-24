@@ -38,7 +38,7 @@ public partial class App : Application
         var localState = Services.GetRequiredService<ILocalStateService>();
         await localState.LoadProgressAsync();
 
-        // 预先加载题库数据：从根目录读取 questions.json
+        // 预先加载题库数据
         var quizService = Services.GetRequiredService<IQuizDataService>();
         await LoadQuizDataAsync(quizService);
 
@@ -47,41 +47,19 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// 定位并加载根目录的 questions.json 题库文件
+    /// 从 exe 同目录加载 questions.json 题库文件
     /// </summary>
     private static async Task LoadQuizDataAsync(IQuizDataService quizService)
     {
         try
         {
-            // 推测路径：当前工作目录通常是项目目录 QuizNative/QuizNative，
-            // 需要向上两级到达根目录 (d:\vscode_files\major_course\se\)
-            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            string jsonPath = Path.Combine(AppContext.BaseDirectory, "questions.json");
 
-            // 尝试多个可能的路径
-            string[] candidates =
+            if (File.Exists(jsonPath))
             {
-                Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "questions.json")),
-                Path.GetFullPath(Path.Combine(baseDir, "..", "..", "questions.json")),
-                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", "questions.json")),
-                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "questions.json")),
-            };
-
-            string? foundPath = null;
-            foreach (var path in candidates)
-            {
-                if (File.Exists(path))
-                {
-                    foundPath = path;
-                    break;
-                }
-            }
-
-            if (foundPath != null)
-            {
-                string json = await File.ReadAllTextAsync(foundPath);
+                string json = await File.ReadAllTextAsync(jsonPath);
                 await quizService.LoadQuizAsync(json);
 
-                // 输出加载统计信息到调试控制台
                 var chapters = quizService.GetChapters();
                 int totalQuestions = 0;
                 foreach (var ch in chapters)
@@ -94,7 +72,7 @@ public partial class App : Application
             }
             else
             {
-                Debug.WriteLine("⚠️ 未找到 questions.json 文件，请确认文件路径");
+                Debug.WriteLine($"⚠️ 未找到题库文件: {jsonPath}");
             }
         }
         catch (Exception ex)

@@ -36,6 +36,9 @@ public partial class StandardViewModel : ObservableObject
     [ObservableProperty]
     private string? _selectedOption;
 
+    /// <summary>多选题：用户已勾选的选项字母列表</summary>
+    public ObservableCollection<string> SelectedMultipleOptions { get; } = new();
+
     [ObservableProperty]
     private bool _isAnswerRevealed;
 
@@ -44,6 +47,19 @@ public partial class StandardViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _isCurrentAnswerCorrect;
+
+    /// <summary>单选题/判断题的选项文本（可点击的按钮）</summary>
+    public ObservableCollection<string> SingleChoiceOptions { get; } = new();
+
+    /// <summary>多选题的选项文本（可勾选）</summary>
+    public ObservableCollection<string> MultipleChoiceOptions { get; } = new();
+
+    /// <summary>当前是否为多选题</summary>
+    public bool IsMultipleChoice => CurrentQuestion?.Type == "multiple";
+    /// <summary>当前是否为判断题</summary>
+    public bool IsTrueFalse => CurrentQuestion?.Type == "truefalse";
+    /// <summary>当前是否为单选题</summary>
+    public bool IsSingleChoice => CurrentQuestion?.Type == "single";
 
     public int TotalQuestions => CurrentQuestions.Count;
     public int CurrentQuestionNumber => CurrentIndex + 1;
@@ -74,7 +90,6 @@ public partial class StandardViewModel : ObservableObject
             foreach (var q in questions) CurrentQuestions.Add(q);
             OnPropertyChanged(nameof(HasQuestions));
             OnPropertyChanged(nameof(TotalQuestions));
-            // 强制归零：先 -1 再 0，确保彻底触发
             CurrentIndex = -1;
             CurrentIndex = CurrentQuestions.Count > 0 ? 0 : -1;
         }
@@ -90,6 +105,9 @@ public partial class StandardViewModel : ObservableObject
         {
             CurrentQuestion = CurrentQuestions[value];
             OnPropertyChanged(nameof(CurrentQuestionNumber));
+            OnPropertyChanged(nameof(IsMultipleChoice));
+            OnPropertyChanged(nameof(IsTrueFalse));
+            OnPropertyChanged(nameof(IsSingleChoice));
             ResetAnswerState();
         }
         else
@@ -101,13 +119,39 @@ public partial class StandardViewModel : ObservableObject
     private void ResetAnswerState()
     {
         SelectedOption = null;
+        SelectedMultipleOptions.Clear();
+        SingleChoiceOptions.Clear();
+        MultipleChoiceOptions.Clear();
         IsAnswerRevealed = false;
         FeedbackText = string.Empty;
         IsCurrentAnswerCorrect = false;
+
+        if (CurrentQuestion != null)
+        {
+            // 根据题型设置选项
+            if (CurrentQuestion.Type == "truefalse")
+            {
+                SingleChoiceOptions.Add("T. True");
+                SingleChoiceOptions.Add("F. False");
+            }
+            else if (CurrentQuestion.Type == "multiple")
+            {
+                foreach (var opt in CurrentQuestion.Options)
+                    MultipleChoiceOptions.Add(opt);
+            }
+            else // single
+            {
+                foreach (var opt in CurrentQuestion.Options)
+                    SingleChoiceOptions.Add(opt);
+            }
+        }
     }
 
+    /// <summary>
+    /// 单选题/判断题：选择一个选项
+    /// </summary>
     [RelayCommand]
-    private void JudgeAnswer(string optionText)
+    private void SelectSingleOption(string optionText)
     {
         if (IsAnswerRevealed || CurrentQuestion == null || string.IsNullOrEmpty(optionText))
             return;
@@ -116,18 +160,65 @@ public partial class StandardViewModel : ObservableObject
         IsAnswerRevealed = true;
 
         string chosenLetter = optionText.Trim().Split('.')[0].Trim();
-        string correctLetter = CurrentQuestion.Answer.Trim();
+        var userAnswers = new List<string> { chosenLetter };
 
-        if (chosenLetter.Equals(correctLetter, StringComparison.OrdinalIgnoreCase))
+        bool correct = CurrentQuestion.IsAnswerCorrect(userAnswers);
+        IsCurrentAnswerCorrect = correct;
+
+        if (correct)
         {
-            IsCurrentAnswerCorrect = true;
             FeedbackText = "🎉 回答正确！";
             _localStateService.RecordCorrectAnswer(CurrentQuestion.Id);
         }
         else
         {
-            IsCurrentAnswerCorrect = false;
-            FeedbackText = $"❌ 回答错误。标准答案是：{correctLetter}";
+            string correctStr = string.Join("", CurrentQuestion.CorrectAnswers);
+            FeedbackText = $"❌ 回答错误。标准答案是：{correctStr}";
+            _localStateService.RecordWrongAnswer(CurrentQuestion.Id);
+        }
+    }
+
+    /// <summary>
+    /// 多选题：切换某个选项的选中状态（勾选/取消）
+    /// </summary>
+    [RelayCommand]
+    private void ToggleMultipleOption(string optionText)
+    {
+        if (IsAnswerRevealed || CurrentQuestion == null || string.IsNullOrEmpty(optionText))
+            return;
+
+        string letter = optionText.Trim().Split('.')[0].Trim();
+        if (SelectedMultipleOptions.Contains(letter))
+            SelectedMultipleOptions.Remove(letter);
+        else
+            SelectedMultipleOptions.Add(letter);
+    }
+
+    /// <summary>
+    /// 多选题：提交答案
+    /// </summary>
+    [RelayCommand]
+    private void SubmitMultipleAnswer()
+    {
+        if (IsAnswerRevealed || CurrentQuestion == null || SelectedMultipleOptions.Count == 0)
+            return;
+
+        IsAnswerRevealed = true;
+
+        var userAnswers = SelectedMultipleOptions.ToList();
+        bool correct = CurrentQuestion.IsAnswerCorrect(userAnswers);
+        IsCurrentAnswerCorrect = correct;
+
+        if (correct)
+        {
+            FeedbackText = "🎉 回答正确！";
+            _localStateService.RecordCorrectAnswer(CurrentQuestion.Id);
+        }
+        else
+        {
+            string correctStr = string.Join("", CurrentQuestion.CorrectAnswers);
+            string userStr = string.Join("", userAnswers);
+            FeedbackText = $"❌ 回答错误。你的选择：{userStr}，标准答案是：{correctStr}";
             _localStateService.RecordWrongAnswer(CurrentQuestion.Id);
         }
     }

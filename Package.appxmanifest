@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -9,7 +9,6 @@
   IgnorableNamespaces="uap rescap systemai">
 
   <Identity
-    Name="81699DFE-D3A9-484C-A4CF-A4283DD74393"
     Name="QuizNative"
     Publisher="CN=QuizNative"
     Version="1.0.0.0" />

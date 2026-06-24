@@ -8,50 +8,116 @@ public class QuizDataService : IQuizDataService
     private Dictionary<string, List<Question>> _chaptersData = new();
     private Dictionary<string, Question> _allQuestionsMap = new();
 
-    // 内部辅助类，映射原始 JSON
-    private class QuestionJsonModel
+    private class NewQuestionJsonModel
     {
-        public string topic { get; set; } = string.Empty;
+        public string id { get; set; } = string.Empty;
+        public int chapter { get; set; }
+        public string englishQuestion { get; set; } = string.Empty;
+        public List<OptionJsonModel> options { get; set; } = new();
+        public List<string> chineseOptions { get; set; } = new();
+        public string chineseTranslation { get; set; } = string.Empty;
+        public string explanation { get; set; } = string.Empty;
         public string answer { get; set; } = string.Empty;
-        public List<string> options { get; set; } = new();
+        public string type { get; set; } = "single";
+    }
+
+    private class OptionJsonModel
+    {
+        public string label { get; set; } = string.Empty;
+        public string text { get; set; } = string.Empty;
     }
 
     public Task LoadQuizAsync(string jsonContent)
     {
-        var rawData = JsonSerializer.Deserialize<Dictionary<string, List<QuestionJsonModel>>>(jsonContent);
+        var rawArray = JsonSerializer.Deserialize<List<NewQuestionJsonModel>>(jsonContent)
+            ?? throw new InvalidOperationException("无法解析题目数据：JSON 格式不识别，期望根节点为数组。");
+
+        if (rawArray.Count == 0)
+            throw new InvalidOperationException("题库为空，JSON 数组中没有任何题目。");
 
         _chaptersData.Clear();
         _allQuestionsMap.Clear();
 
-        if (rawData != null)
+        var groups = rawArray.GroupBy(q => q.chapter);
+        foreach (var group in groups)
         {
-            foreach (var kvp in rawData)
+            string chapterId = group.Key.ToString();
+            var questionList = new List<Question>();
+
+            int index = 0;
+            foreach (var rawQ in group)
             {
-                string chapterId = kvp.Key;
-                var questionList = new List<Question>();
+                string uniqueId = $"{chapterId}_{index}";
 
-                for (int i = 0; i < kvp.Value.Count; i++)
+                // 构造英文选项列表
+                var options = rawQ.options.Select(o => $"{o.label}. {o.text}").ToList();
+
+                // 构造中文选项列表（与 options 一一对应）
+                var chineseOptions = new List<string>();
+                if (rawQ.chineseOptions != null && rawQ.chineseOptions.Count > 0)
                 {
-                    var rawQ = kvp.Value[i];
-                    string uniqueId = $"{chapterId}_{i}"; // 生成形如 "1_0" 的唯一ID
-
-                    var question = new Question
-                    {
-                        Id = uniqueId,
-                        ChapterId = chapterId,
-                        Topic = rawQ.topic,
-                        Answer = rawQ.answer,
-                        Options = rawQ.options
-                    };
-
-                    questionList.Add(question);
-                    _allQuestionsMap[uniqueId] = question;
+                    chineseOptions = rawQ.chineseOptions;
+                }
+                else
+                {
+                    // 如果没有 chineseOptions，用英文选项填充
+                    chineseOptions = options.ToList();
                 }
 
-                _chaptersData[chapterId] = questionList;
+                var question = new Question
+                {
+                    Id = uniqueId,
+                    ChapterId = chapterId,
+                    Topic = rawQ.englishQuestion,
+                    ChineseTranslation = rawQ.chineseTranslation,
+                    Explanation = rawQ.explanation,
+                    Type = rawQ.type,
+                    Options = options,
+                    ChineseOptions = chineseOptions,
+                    CorrectAnswers = ParseAnswerToCorrectAnswers(rawQ.answer, rawQ.type)
+                };
+
+                questionList.Add(question);
+                _allQuestionsMap[uniqueId] = question;
+                index++;
             }
+
+            _chaptersData[chapterId] = questionList;
         }
+
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// 将答案字符串解析为正确答案列表。
+    /// 例如 "AC" → ["A","C"]，"A" → ["A"]，"T" → ["T"]，"F" → ["F"]
+    /// </summary>
+    private List<string> ParseAnswerToCorrectAnswers(string answer, string type)
+    {
+        if (string.IsNullOrWhiteSpace(answer))
+            return new List<string>();
+
+        string trimmed = answer.Trim().ToUpperInvariant();
+
+        if (type == "truefalse")
+        {
+            if (trimmed == "T" || trimmed == "(T)")
+                return new List<string> { "T" };
+            if (trimmed == "F" || trimmed == "(F)")
+                return new List<string> { "F" };
+        }
+
+        // 去掉括号，如 (A) → A, (AC) → AC
+        string clean = trimmed.Trim('(', ')', ' ');
+
+        var result = new List<string>();
+        foreach (char c in clean)
+        {
+            if (char.IsLetter(c))
+                result.Add(c.ToString());
+        }
+
+        return result.Count > 0 ? result : new List<string> { clean };
     }
 
     public List<string> GetChapters() =>
