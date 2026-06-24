@@ -1,0 +1,50 @@
+<Window
+    x:Class="QuizNative.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="QuizNative"
+    mc:Ignorable="d">
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid>
+        <!-- NavigationView 使用顶部导航模式，彻底消除双重侧边栏冲突 -->
+        <NavigationView x:Name="NavView"
+                        PaneDisplayMode="Top"
+                        IsSettingsVisible="False"
+                        IsBackButtonVisible="Collapsed"
+                        SelectionChanged="NavView_SelectionChanged">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="顺序刷题" x:Name="NavStandard" Tag="standard">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE104;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="错题本" x:Name="NavWrong" Tag="wrong">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7BA;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="历史统计" x:Name="NavHistory" Tag="history">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE9D2;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <Frame x:Name="ContentFrame" />
+        </NavigationView>
+
+        <!-- 自定义标题栏拖拽区域 -->
+        <Border x:Name="AppTitleBar"
+                Height="32"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
+                IsHitTestVisible="True" />
+    </Grid>
+</Window>
