@@ -6,102 +6,136 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="32,24">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <!-- ===== 三列布局：左留白 : 内容 : 右留白 ===== -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
         <!-- 有错题时的内容区 -->
-        <StackPanel x:Name="QuestionPanel" Visibility="Collapsed" Spacing="16" MaxWidth="800" HorizontalAlignment="Left">
+        <ScrollViewer Grid.Column="1"
+                      VerticalScrollBarVisibility="Auto"
+                      x:Name="MainScrollViewer">
+            <StackPanel x:Name="QuestionPanel" Visibility="Collapsed"
+                        Spacing="20"
+                        Margin="0,28,0,48">
 
-            <TextBlock x:Name="TitleBlock" Text="错题消灭本"
-                       Style="{StaticResource SubtitleTextBlockStyle}" FontWeight="SemiBold" />
+                <!-- 进度提示 -->
+                <TextBlock x:Name="ProgressHeader"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
 
-            <StackPanel Spacing="12">
-                <!-- 题干 -->
-                <StackPanel Spacing="6" Margin="0,8,0,12">
-                    <TextBlock x:Name="ProgressHeader"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    <TextBlock x:Name="TopicText"
-                               Style="{StaticResource BodyLargeTextBlockStyle}"
-                               TextWrapping="Wrap"
-                               FontSize="16"
-                               FontWeight="Normal"
-                               LineHeight="26" />
-                    <TextBlock x:Name="TranslationText"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               TextWrapping="Wrap"
-                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
-                               FontStyle="Italic"
-                               FontSize="14"
-                               Visibility="Collapsed" />
-                </StackPanel>
+                <!-- 主卡片 -->
+                <Border Background="{ThemeResource ControlFillColorDefaultBrush}"
+                        CornerRadius="10"
+                        Padding="28,24"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1">
+                    <StackPanel Spacing="16">
+                        <!-- 题干 -->
+                        <TextBlock x:Name="TopicText"
+                                   Style="{StaticResource BodyLargeTextBlockStyle}"
+                                   TextWrapping="Wrap"
+                                   FontSize="16"
+                                   FontWeight="Normal"
+                                   LineHeight="26" />
 
-                <!-- 单选/判断题选项按钮 -->
-                <ItemsControl x:Name="OptionsList" Margin="0,2,0,0" />
-
-                <!-- 多选题复选框（默认隐藏） -->
-                <ItemsControl x:Name="MultipleOptionsList" Margin="0,2,0,0" Visibility="Collapsed" />
-
-                <!-- 多选题提交按钮 -->
-                <Button x:Name="SubmitMultipleButton"
-                        Content="提交多选题答案"
-                        HorizontalAlignment="Stretch"
-                        Margin="0,6,0,0"
-                        Padding="12,8"
-                        CornerRadius="4"
-                        Style="{StaticResource AccentButtonStyle}"
-                        Visibility="Collapsed"
-                        Click="SubmitMultipleButton_Click" />
-
-                <!-- 解析内容（回答后自动显示） -->
-                <Border x:Name="ExplanationPanel"
-                        Visibility="Collapsed"
-                        Background="{ThemeResource SystemControlAcrylicWindowBrush}"
-                        CornerRadius="4"
-                        Padding="12,8"
-                        Margin="0,2,0,0">
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="题目解析"
-                                   Style="{StaticResource SubtitleTextBlockStyle}"
-                                   FontWeight="SemiBold"
-                                   FontSize="14" />
-                        <TextBlock x:Name="ChineseTranslationText"
+                        <!-- 中文翻译 -->
+                        <TextBlock x:Name="TranslationText"
                                    Style="{StaticResource BodyTextBlockStyle}"
                                    TextWrapping="Wrap"
-                                   FontSize="13"
+                                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                   FontStyle="Italic"
+                                   FontSize="14"
                                    Visibility="Collapsed" />
-                        <TextBlock x:Name="ExplanationText"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   TextWrapping="Wrap"
-                                   FontSize="13" />
+
+                        <!-- 分隔线 -->
+                        <Border Height="1"
+                                Background="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                Opacity="0.5" />
+
+                        <!-- 单选/判断题选项按钮 -->
+                        <ItemsControl x:Name="OptionsList" Margin="0,4,0,0" />
+
+                        <!-- 多选题复选框（默认隐藏） -->
+                        <ItemsControl x:Name="MultipleOptionsList" Margin="0,4,0,0" Visibility="Collapsed" />
+
+                        <!-- 多选题提交按钮 -->
+                        <Button x:Name="SubmitMultipleButton"
+                                Content="✓ 提交多选题答案"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,8,0,0"
+                                Padding="14,10"
+                                CornerRadius="6"
+                                Style="{StaticResource AccentButtonStyle}"
+                                Visibility="Collapsed"
+                                Click="SubmitMultipleButton_Click" />
+
+                        <!-- 反馈横条 -->
+                        <Border x:Name="FeedbackBorder" Visibility="Collapsed"
+                                BorderThickness="1" CornerRadius="6" Padding="16,12">
+                            <TextBlock x:Name="FeedbackTextBlock"
+                                       Style="{StaticResource BodyTextBlockStyle}"
+                                       FontWeight="SemiBold"
+                                       HorizontalAlignment="Center" />
+                        </Border>
+
+                        <!-- 解析面板（回答后自动显示） -->
+                        <Border x:Name="ExplanationPanel"
+                                Visibility="Collapsed"
+                                Background="{ThemeResource SystemControlAcrylicWindowBrush}"
+                                CornerRadius="8"
+                                Padding="20,16">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="题目解析"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           FontWeight="SemiBold"
+                                           FontSize="15" />
+                                <TextBlock x:Name="ChineseTranslationText"
+                                           Style="{StaticResource BodyTextBlockStyle}"
+                                           TextWrapping="Wrap"
+                                           FontSize="14"
+                                           Visibility="Collapsed" />
+                                <Border Height="1"
+                                        Background="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                        Opacity="0.3" />
+                                <TextBlock x:Name="ExplanationText"
+                                           Style="{StaticResource BodyTextBlockStyle}"
+                                           TextWrapping="Wrap"
+                                           FontSize="14"
+                                           LineHeight="22" />
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </Border>
 
-                <!-- 反馈横条 -->
-                <Border x:Name="FeedbackBorder" Visibility="Collapsed"
-                        BorderThickness="1" CornerRadius="4" Padding="12,8">
-                    <TextBlock x:Name="FeedbackTextBlock"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               FontWeight="SemiBold" />
-                </Border>
+                <!-- 下一道按钮 -->
+                <Button x:Name="NextButton" Content="下一道错题 →"
+                        HorizontalAlignment="Right"
+                        MinWidth="160"
+                        Padding="16,10"
+                        FontSize="14"
+                        CornerRadius="6"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Click="NextButton_Click" />
             </StackPanel>
-
-            <!-- 下一道 -->
-            <Button x:Name="NextButton" Content="下一道错题"
-                    HorizontalAlignment="Right" Width="140"
-                    FontSize="14"
-                    Style="{StaticResource AccentButtonStyle}"
-                    Click="NextButton_Click" />
-        </StackPanel>
+        </ScrollViewer>
 
         <!-- 无错题空状态 -->
-        <StackPanel x:Name="EmptyPanel" Visibility="Visible"
+        <StackPanel Grid.Column="1"
+                    x:Name="EmptyPanel" Visibility="Visible"
                     VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="16">
-            <FontIcon Glyph="&#xE930;" FontSize="64" Foreground="Green" />
+            <FontIcon Glyph="&#xE930;" FontSize="64" Foreground="Green"
+                      HorizontalAlignment="Center" />
             <TextBlock Text="没有任何错题记录"
                        Style="{StaticResource TitleTextBlockStyle}"
                        HorizontalAlignment="Center" />
             <TextBlock Text="太厉害了！你的本地错题本空空如洗。"
                        Style="{StaticResource BodyTextBlockStyle}"
-                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                       HorizontalAlignment="Center" />
         </StackPanel>
     </Grid>
 </Page>

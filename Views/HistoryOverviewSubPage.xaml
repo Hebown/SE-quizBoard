@@ -7,178 +7,131 @@
     xmlns:local="using:QuizNative.ViewModels"
     mc:Ignorable="d">
 
-    <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                  VerticalScrollBarVisibility="Auto">
-        <StackPanel Padding="32,24" Spacing="24" MaxWidth="800" HorizontalAlignment="Left">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
 
-            <!-- ===== 页面标题 ===== -->
-            <TextBlock Text="刷题履历与统计"
-                       Style="{StaticResource SubtitleTextBlockStyle}"
-                       FontWeight="SemiBold"/>
+        <ScrollViewer Grid.Column="1"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="28"
+                        Margin="0,28,0,48">
 
-            <!-- ===== 总进度主卡片 ===== -->
-            <Border Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1" CornerRadius="8" Padding="24">
-                <Grid RowSpacing="16">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <!-- ===== 页面标题 ===== -->
+                <TextBlock Text="刷题履历与统计"
+                           Style="{StaticResource TitleTextBlockStyle}"
+                           FontWeight="SemiBold"
+                           FontSize="22" />
 
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                <!-- ===== 总进度主卡片 ===== -->
+                <Border Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1" CornerRadius="12" Padding="32,24">
+                    <Grid RowSpacing="18">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <StackPanel Grid.Column="0" Spacing="4">
-                            <TextBlock Text="总解题进度"
-                                       Style="{StaticResource BodyLargeTextBlockStyle}" FontWeight="SemiBold"/>
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock x:Name="TotalPracticedLabel"
-                                           Style="{StaticResource SubtitleTextBlockStyle}"
-                                           FontWeight="Bold"
-                                           Foreground="{ThemeResource SystemAccentColor}"/>
-                                <TextBlock x:Name="TotalSuffixLabel"
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="6">
+                                <TextBlock Text="总解题进度"
+                                           Style="{StaticResource BodyLargeTextBlockStyle}" FontWeight="SemiBold" FontSize="18"/>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock x:Name="TotalPracticedLabel"
+                                               Style="{StaticResource SubtitleTextBlockStyle}"
+                                               FontWeight="Bold"
+                                               FontSize="34"
+                                               Foreground="{ThemeResource SystemAccentColor}"/>
+                                    <TextBlock x:Name="TotalSuffixLabel"
+                                               Style="{StaticResource BodyTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                               VerticalAlignment="Bottom" Margin="0,0,0,6"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <TextBlock x:Name="TotalPercentageLabel"
+                                       Grid.Column="1"
+                                       Style="{StaticResource TitleTextBlockStyle}"
+                                       FontSize="42"
+                                       FontWeight="Black"
+                                       Foreground="{ThemeResource SystemAccentColor}"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <ProgressBar Grid.Row="1" x:Name="TotalProgressBar"
+                                     Maximum="100" Height="8" CornerRadius="4"/>
+                    </Grid>
+                </Border>
+
+                <!-- ===== 两个概览小卡片（横向并排） ===== -->
+                <Grid ColumnSpacing="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            Background="{ThemeResource ControlFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="10" Padding="24,20">
+                        <StackPanel Orientation="Horizontal" Spacing="16">
+                            <FontIcon Glyph="&#xE7BA;" FontSize="32" Foreground="Red" VerticalAlignment="Center"/>
+                            <StackPanel>
+                                <TextBlock Text="当前错题本存量"
                                            Style="{StaticResource CaptionTextBlockStyle}"
                                            Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
-                                           VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                                           FontSize="13"/>
+                                <TextBlock x:Name="WrongCountLabel"
+                                           Style="{StaticResource BodyLargeTextBlockStyle}"
+                                           FontWeight="Bold"
+                                           FontSize="28"/>
                             </StackPanel>
                         </StackPanel>
+                    </Border>
 
-                        <TextBlock x:Name="TotalPercentageLabel"
-                                   Grid.Column="1"
-                                   Style="{StaticResource TitleTextBlockStyle}"
-                                   FontWeight="Black"
-                                   Foreground="{ThemeResource SystemAccentColor}"
-                                   VerticalAlignment="Center"/>
-                    </Grid>
-
-                    <ProgressBar Grid.Row="1" x:Name="TotalProgressBar"
-                                 Maximum="100" Height="6" CornerRadius="3"/>
+                    <Border Grid.Column="1"
+                            Background="{ThemeResource ControlFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="10" Padding="24,20">
+                        <StackPanel Orientation="Horizontal" Spacing="16">
+                            <FontIcon Glyph="&#xE8B7;" FontSize="32"
+                                      Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
+                            <StackPanel>
+                                <TextBlock Text="系统载入总题数"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                           FontSize="13"/>
+                                <TextBlock x:Name="TotalCountLabel"
+                                           Style="{StaticResource BodyLargeTextBlockStyle}"
+                                           FontWeight="Bold"
+                                           FontSize="28"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </Grid>
-            </Border>
 
-            <!-- ===== 两个概览小卡片 ===== -->
-            <Grid ColumnSpacing="16">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                <Border Height="1"
+                        Background="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        Opacity="0.3" />
 
-                <Border Grid.Column="0"
-                        Background="{ThemeResource ControlFillColorDefaultBrush}"
-                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                        BorderThickness="1" CornerRadius="6" Padding="16">
-                    <StackPanel Orientation="Horizontal" Spacing="16">
-                        <FontIcon Glyph="&#xE7BA;" FontSize="28" Foreground="Red" VerticalAlignment="Center"/>
-                        <StackPanel>
-                            <TextBlock Text="当前错题本存量"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            <TextBlock x:Name="WrongCountLabel"
-                                       Style="{StaticResource BodyLargeTextBlockStyle}" FontWeight="Bold"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
+                <!-- ===== 按章节查看履历标题 ===== -->
+                <TextBlock Text="按章节查看履历"
+                           Style="{StaticResource BodyLargeTextBlockStyle}"
+                           FontWeight="SemiBold"
+                           FontSize="17" />
 
-                <Border Grid.Column="1"
-                        Background="{ThemeResource ControlFillColorDefaultBrush}"
-                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                        BorderThickness="1" CornerRadius="6" Padding="16">
-                    <StackPanel Orientation="Horizontal" Spacing="16">
-                        <FontIcon Glyph="&#xE8B7;" FontSize="28"
-                                  Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
-                        <StackPanel>
-                            <TextBlock Text="系统载入总题数"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            <TextBlock x:Name="TotalCountLabel"
-                                       Style="{StaticResource BodyLargeTextBlockStyle}" FontWeight="Bold"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
-            </Grid>
+                <!-- ===== 章节进度列表（横排网格展示） ===== -->
+                <ItemsControl x:Name="ChapterList" />
 
-            <MenuFlyoutSeparator Opacity="0.4"/>
-
-            <!-- ===== 按章节查看履历标题 ===== -->
-            <TextBlock Text="按章节查看履历"
-                       Style="{StaticResource BodyLargeTextBlockStyle}" FontWeight="SemiBold"/>
-
-            <!-- ===== 章节进度列表（可点击下钻） ===== -->
-            <ItemsControl x:Name="ChapterList">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Stretch"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Padding="0" Margin="0,0,0,8"
-                                Click="ChapterItem_Click">
-                            <Border Background="{ThemeResource ControlFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                    BorderThickness="1" CornerRadius="6" Padding="16,12"
-                                    HorizontalAlignment="Stretch">
-                                <Grid RowSpacing="8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <TextBlock x:Name="ChapterTitleText"
-                                               Grid.Row="0" Grid.Column="0"
-                                               Style="{StaticResource BodyTextBlockStyle}" FontWeight="Medium"/>
-
-                                    <TextBlock x:Name="ChapterRatioText"
-                                               Grid.Row="0" Grid.Column="1"
-                                               Style="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-
-                                    <ProgressBar x:Name="ChapterProgressBar"
-                                                 Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                                 Maximum="100" Height="4" Margin="0,4,0,0" CornerRadius="2"/>
-
-                                    <!-- 对错履历徽章 -->
-                                    <StackPanel x:Name="ChapterBadgePanel"
-                                                Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                                                Orientation="Horizontal" Spacing="16" Margin="0,6,0,0">
-                                        <StackPanel Orientation="Horizontal" Spacing="4">
-                                            <FontIcon Glyph="&#xE930;" FontSize="12" Foreground="Green"/>
-                                            <TextBlock Text="做对" Style="{StaticResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                            <TextBlock x:Name="CorrectTimesText"
-                                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                                       FontWeight="Bold" Foreground="Green"/>
-                                            <TextBlock Text="次" Style="{StaticResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Spacing="4">
-                                            <FontIcon Glyph="&#xE7BA;" FontSize="12" Foreground="Red"/>
-                                            <TextBlock Text="做错" Style="{StaticResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                            <TextBlock x:Name="WrongTimesText"
-                                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                                       FontWeight="Bold" Foreground="Red"/>
-                                            <TextBlock Text="次" Style="{StaticResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        </StackPanel>
-                                        <FontIcon Glyph="&#xE76B;" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
-                                                  VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-        </StackPanel>
-    </ScrollViewer>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </Page>

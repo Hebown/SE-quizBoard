@@ -12,127 +12,143 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- 顶部面包屑导航 -->
+        <!-- 顶部导航栏（全宽） -->
         <Border Grid.Row="0"
                 BorderBrush="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                 BorderThickness="0,0,0,1"
-                Padding="24,12">
-            <StackPanel Orientation="Horizontal" Spacing="8">
+                Padding="28,12">
+            <StackPanel Orientation="Horizontal" Spacing="10">
                 <HyperlinkButton x:Name="BackLink"
                                  Content="← 返回章节"
                                  Click="BackButton_Click"
-                                 FontWeight="SemiBold" />
-                <TextBlock Text=" / " VerticalAlignment="Center"
+                                 FontWeight="SemiBold"
+                                 FontSize="14" />
+                <TextBlock Text="/" VerticalAlignment="Center"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                 <TextBlock x:Name="BreadcrumbTitle"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           FontWeight="SemiBold"
+                           FontSize="15"
                            VerticalAlignment="Center" />
             </StackPanel>
         </Border>
 
-        <!-- 题目详情 -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel Padding="32,24" Spacing="24" MaxWidth="800" HorizontalAlignment="Left">
+        <!-- 内容区 - 三列布局 -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="5*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
 
-                <!-- 履历统计卡片 -->
-                <Border Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                        BorderThickness="1" CornerRadius="8" Padding="20">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1"
+                            Spacing="24"
+                            Margin="0,24,0,48">
 
-                        <StackPanel Grid.Column="0" HorizontalAlignment="Center" Spacing="4">
-                            <FontIcon Glyph="&#xE930;" FontSize="24" Foreground="Green" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="CorrectCountText"
-                                       Style="{StaticResource SubtitleTextBlockStyle}"
-                                       FontWeight="Bold" Foreground="Green"
-                                       HorizontalAlignment="Center"/>
-                            <TextBlock Text="做对" Style="{StaticResource CaptionTextBlockStyle}"
+                    <!-- ===== 履历统计卡片 ===== -->
+                    <Border Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="12" Padding="28,24">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" HorizontalAlignment="Center" Spacing="6">
+                                <FontIcon Glyph="&#xE930;" FontSize="32" Foreground="Green" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="CorrectCountText"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           FontSize="32"
+                                           FontWeight="Bold" Foreground="Green"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="做对" Style="{StaticResource BodyTextBlockStyle}"
+                                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                           HorizontalAlignment="Center" FontSize="14"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" HorizontalAlignment="Center" Spacing="6">
+                                <FontIcon Glyph="&#xE7BA;" FontSize="32" Foreground="Red" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="WrongCountText"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           FontSize="32"
+                                           FontWeight="Bold" Foreground="Red"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="做错" Style="{StaticResource BodyTextBlockStyle}"
+                                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                           HorizontalAlignment="Center" FontSize="14"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" HorizontalAlignment="Center" Spacing="6">
+                                <FontIcon Glyph="&#xE9CE;" FontSize="32"
+                                          Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="TotalAttemptsText"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           FontSize="32"
+                                           FontWeight="Bold"
+                                           Foreground="{ThemeResource SystemAccentColor}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="总答题次数" Style="{StaticResource BodyTextBlockStyle}"
+                                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                           HorizontalAlignment="Center" FontSize="14"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- ===== 题干卡片 ===== -->
+                    <Border Background="{ThemeResource ControlFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="10" Padding="24,20">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="题目内容"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
-                                       HorizontalAlignment="Center"/>
-                        </StackPanel>
+                                       FontWeight="SemiBold"
+                                       FontSize="13" />
+                            <TextBlock x:Name="TopicText"
+                                       Style="{StaticResource BodyLargeTextBlockStyle}"
+                                       TextWrapping="Wrap"
+                                       FontSize="16"
+                                       FontWeight="Normal"
+                                       LineHeight="26" />
 
-                        <StackPanel Grid.Column="1" HorizontalAlignment="Center" Spacing="4">
-                            <FontIcon Glyph="&#xE7BA;" FontSize="24" Foreground="Red" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="WrongCountText"
-                                       Style="{StaticResource SubtitleTextBlockStyle}"
-                                       FontWeight="Bold" Foreground="Red"
-                                       HorizontalAlignment="Center"/>
-                            <TextBlock Text="做错" Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
-                                       HorizontalAlignment="Center"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2" HorizontalAlignment="Center" Spacing="4">
-                            <FontIcon Glyph="&#xE9CE;" FontSize="24"
-                                      Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TotalAttemptsText"
-                                       Style="{StaticResource SubtitleTextBlockStyle}"
-                                       FontWeight="Bold"
-                                       Foreground="{ThemeResource SystemAccentColor}"
-                                       HorizontalAlignment="Center"/>
-                            <TextBlock Text="总答题次数" Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
-                                       HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
-                <!-- 题干（视觉降噪：纯文本直出） -->
-                <StackPanel Spacing="8" Margin="0,0,0,8">
-                    <TextBlock Text="题目内容"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    <TextBlock x:Name="TopicText"
-                               Style="{StaticResource BodyLargeTextBlockStyle}"
-                               TextWrapping="Wrap"
-                               FontSize="20"
-                               FontWeight="Normal"
-                               LineHeight="32" />
-                </StackPanel>
-
-                <!-- 正确答案标记 -->
-                <Border x:Name="AnswerBadge"
-                        Background="{ThemeResource SystemAccentColor}"
-                        CornerRadius="4"
-                        Padding="12,6"
-                        HorizontalAlignment="Left">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon Glyph="&#xE930;" FontSize="12" Foreground="White"/>
-                        <TextBlock x:Name="AnswerText"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   FontWeight="SemiBold"
-                                   Foreground="White"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- 选项列表（只读锁定） -->
-                <ItemsControl x:Name="OptionsList">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="{ThemeResource ControlFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
+                            <!-- 正确答案标记 -->
+                            <Border x:Name="AnswerBadge"
+                                    Background="{ThemeResource SystemAccentColor}"
                                     CornerRadius="6"
-                                    Padding="16,12"
-                                    Margin="0,0,0,8"
-                                    HorizontalAlignment="Stretch"
-                                    IsHitTestVisible="False">
-                                <TextBlock Text="{Binding}"
-                                           Style="{StaticResource BodyTextBlockStyle}"
-                                           TextWrapping="Wrap"/>
+                                    Padding="14,8"
+                                    HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE930;" FontSize="14" Foreground="White"/>
+                                    <TextBlock x:Name="AnswerText"
+                                               Style="{StaticResource BodyTextBlockStyle}"
+                                               FontWeight="SemiBold"
+                                               FontSize="14"
+                                               Foreground="White"/>
+                                </StackPanel>
                             </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
 
-            </StackPanel>
+                            <!-- 分隔线 -->
+                            <Border Height="1"
+                                    Background="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                    Opacity="0.3" />
+
+                            <!-- 选项列表 -->
+                            <TextBlock Text="选项"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                       FontWeight="SemiBold"
+                                       FontSize="13" />
+                            <ItemsControl x:Name="OptionsList" />
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Page>
