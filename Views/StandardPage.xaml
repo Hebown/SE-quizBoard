@@ -1,0 +1,154 @@
+<Page
+    x:Class="QuizNative.Views.StandardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:QuizNative.ViewModels"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260" />
+            <ColumnDefinition Width="1" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ===== 左侧章节列表 ===== -->
+        <Grid Grid.Column="0" Padding="16,24,16,16" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Text="章节选择"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
+                       FontWeight="SemiBold" />
+
+            <ListView Grid.Row="1"
+                      x:Name="ChapterListView"
+                      ItemsSource="{x:Bind ViewModel.Chapters}"
+                      SelectionMode="Single"
+                      SelectionChanged="ChapterListView_SelectionChanged"
+                      Margin="0,8,0,0">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ChapterItem">
+                        <Grid Padding="4,8">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <FontIcon Glyph="&#xE8B7;"
+                                          FontSize="16"
+                                          Foreground="{ThemeResource SystemAccentColor}" />
+                                <TextBlock Text="{x:Bind DisplayText}"
+                                           VerticalAlignment="Center"
+                                           Style="{StaticResource BodyTextBlockStyle}" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <!-- ===== 分隔线 ===== -->
+        <Border Grid.Column="1"
+                Background="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                Width="1"
+                Margin="0,24"
+                Opacity="0.3" />
+
+        <!-- ===== 右侧内容区（三行固定布局，防止抖动） ===== -->
+        <Grid Grid.Column="2" Padding="32,24,32,24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />       <!-- 主题目区：自适应填充 -->
+                <RowDefinition Height="60" />      <!-- 反馈横条：固定高度 60px -->
+                <RowDefinition Height="64" />      <!-- 底部导航栏：固定高度 64px -->
+            </Grid.RowDefinitions>
+
+            <!-- Row 0: 主题目区（题干 + 选项，可滚动） -->
+            <ScrollViewer Grid.Row="0"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Margin="0,0,24,12">
+
+                <!-- 用 Grid 替代 StackPanel：空状态居中，有题目居左 -->
+                <Grid MaxWidth="800" HorizontalAlignment="Stretch">
+
+                    <!-- 空状态提示：居中 -->
+                    <StackPanel x:Name="EmptyPanel" Visibility="Visible"
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                Spacing="12">
+                        <FontIcon Glyph="&#xE9CE;" FontSize="56"
+                                  Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="请在左侧选择章节开始刷题"
+                                   Style="{StaticResource BodyLargeTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                    </StackPanel>
+
+                    <!-- 有题目时：居左 -->
+                    <StackPanel x:Name="QuestionPanel" Visibility="Collapsed"
+                                HorizontalAlignment="Left" Spacing="16">
+                        <!-- 题干（视觉降噪：纯文本，无外框） -->
+                        <StackPanel Spacing="8" Margin="0,12,0,24">
+                            <TextBlock x:Name="ProgressHeader"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock x:Name="TopicText"
+                                       Style="{StaticResource BodyLargeTextBlockStyle}"
+                                       TextWrapping="Wrap"
+                                       FontSize="20"
+                                       FontWeight="Normal"
+                                       LineHeight="32" />
+                        </StackPanel>
+
+                        <!-- 选项列表 -->
+                        <ItemsControl x:Name="OptionsList" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Row 1: 反馈横条（固定高度，绝不撑开布局） -->
+            <Border Grid.Row="1"
+                    x:Name="FeedbackBorder"
+                    Visibility="Collapsed"
+                    Height="48"
+                    Margin="0,0,24,12"
+                    CornerRadius="6"
+                    Padding="16,0">
+                <TextBlock x:Name="FeedbackTextBlock"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           FontWeight="SemiBold" />
+            </Border>
+
+            <!-- Row 2: 底部导航栏（固定高度 64px） -->
+            <Border Grid.Row="2"
+                    x:Name="NavBar"
+                    Visibility="Collapsed"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                    BorderThickness="0,1,0,0"
+                    Padding="0,12,24,0">
+                <Grid MaxWidth="800" HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Content="← 上一题"
+                            HorizontalAlignment="Left" Width="130"
+                            Click="PreviousButton_Click" />
+
+                    <TextBlock x:Name="NavProgressText" Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+
+                    <Button Grid.Column="2" Content="下一题 →"
+                            HorizontalAlignment="Right" Width="130"
+                            Click="NextButton_Click"
+                            Style="{StaticResource AccentButtonStyle}" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>
