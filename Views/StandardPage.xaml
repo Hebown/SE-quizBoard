@@ -64,29 +64,27 @@
                 <RowDefinition Height="64" />      <!-- 底部导航栏：固定高度 64px -->
             </Grid.RowDefinitions>
 
-            <!-- Row 0: 主题目区（题干 + 选项，可滚动） -->
-            <ScrollViewer Grid.Row="0"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled"
-                          Margin="0,0,24,12">
+            <!-- Row 0: 主题目区 — 层叠：空状态居中 + 题目区可滚动居左 -->
+            <Grid Grid.Row="0" Margin="0,0,24,12">
 
-                <!-- 用 Grid 替代 StackPanel：空状态居中，有题目居左 -->
-                <Grid MaxWidth="800" HorizontalAlignment="Stretch">
+                <!-- 空状态提示：在整个右侧区域正中央 -->
+                <StackPanel x:Name="EmptyPanel" Visibility="Visible"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Spacing="12">
+                    <FontIcon Glyph="&#xE9CE;" FontSize="56"
+                              Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                    <TextBlock Text="请在左侧选择章节开始刷题"
+                               Style="{StaticResource BodyLargeTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                </StackPanel>
 
-                    <!-- 空状态提示：居中 -->
-                    <StackPanel x:Name="EmptyPanel" Visibility="Visible"
-                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                Spacing="12">
-                        <FontIcon Glyph="&#xE9CE;" FontSize="56"
-                                  Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="请在左侧选择章节开始刷题"
-                                   Style="{StaticResource BodyLargeTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
-
-                    <!-- 有题目时：居左 -->
-                    <StackPanel x:Name="QuestionPanel" Visibility="Collapsed"
-                                HorizontalAlignment="Left" Spacing="16">
+                <!-- 有题目时：可滚动的题目内容区，居左 -->
+                <ScrollViewer x:Name="QuestionScrollViewer" Visibility="Collapsed"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="QuestionPanel"
+                                HorizontalAlignment="Left" Spacing="16"
+                                MaxWidth="800">
                         <!-- 题干（视觉降噪：纯文本，无外框） -->
                         <StackPanel Spacing="8" Margin="0,12,0,24">
                             <TextBlock x:Name="ProgressHeader"
@@ -103,8 +101,8 @@
                         <!-- 选项列表 -->
                         <ItemsControl x:Name="OptionsList" Margin="0,4,0,0" />
                     </StackPanel>
-                </Grid>
-            </ScrollViewer>
+                </ScrollViewer>
+            </Grid>
 
             <!-- Row 1: 反馈横条（固定高度，绝不撑开布局） -->
             <Border Grid.Row="1"

@@ -74,13 +74,13 @@ public sealed partial class StandardPage : Page
 
         if (q == null)
         {
-            QuestionPanel.Visibility = Visibility.Collapsed;
+            QuestionScrollViewer.Visibility = Visibility.Collapsed;
             NavBar.Visibility = Visibility.Collapsed;
             EmptyPanel.Visibility = Visibility.Visible;
             return;
         }
 
-        QuestionPanel.Visibility = Visibility.Visible;
+        QuestionScrollViewer.Visibility = Visibility.Visible;
         EmptyPanel.Visibility = Visibility.Collapsed;
 
         // 进度头
