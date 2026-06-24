@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "QuizNative (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "QuizNative (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
